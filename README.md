@@ -1,35 +1,9 @@
-# ☕ Coffee Shop Sales Forecasting with Machine Learning
+# Coffee Shop Sales Forecasting with Machine Learning
 
-> Predict next-day revenue for a coffee shop using transaction-level sales data — from raw CSV to production-ready Random Forest model.
-
-[![Python](https://img.shields.io/badge/Python-3.13-blue?logo=python&logoColor=white)](https://www.python.org/)
-[![scikit-learn](https://img.shields.io/badge/scikit--learn-1.8.0-orange?logo=scikit-learn)](https://scikit-learn.org/)
-[![pandas](https://img.shields.io/badge/pandas-3.0.1-150458?logo=pandas)](https://pandas.pydata.org/)
-[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
-
----
-
-## 📋 Table of Contents
-
-- [Overview](#-overview)
-- [Business Problem](#-business-problem)
-- [Dataset](#-dataset)
-- [Project Pipeline](#-project-pipeline)
-- [Feature Engineering](#-feature-engineering)
-- [Modeling](#-modeling)
-- [Results & Evaluation](#-results--evaluation)
-- [Project Structure](#-project-structure)
-- [Getting Started](#-getting-started)
-- [How to Run](#-how-to-run)
-- [Visualizations](#-visualizations)
-- [Key Learnings](#-key-learnings)
-- [Future Improvements](#-future-improvements)
-
----
-
-## 🔍 Overview
+## Overview
 
 This project builds an end-to-end machine learning pipeline to **forecast daily coffee shop revenue one day ahead**. Starting from 3,636 raw transactions, the pipeline cleans data, aggregates to daily granularity, engineers 23+ time-series features, and benchmarks classical baselines against ML models.
+
 
 **Best model:** `RandomForestRegressor (n_estimators=500)` — automatically selected by lowest MAE on a time-based holdout and persisted as `models/best_model.pkl`.
 
@@ -42,7 +16,8 @@ This project builds an end-to-end machine learning pipeline to **forecast daily 
 
 ---
 
-## 💼 Business Problem
+
+## Business Problem
 
 For a coffee shop, knowing tomorrow's revenue helps with:
 
@@ -55,7 +30,9 @@ A naive "tomorrow = today" baseline is not enough. This project shows that a tra
 
 ---
 
-## 📦 Dataset
+
+
+## Dataset
 
 **Source:** `data/coffee_sales.csv` — anonymized point-of-sale transactions
 
@@ -81,7 +58,9 @@ date,daily_revenue,transactions,unique_customers,cash_transactions,card_transact
 
 ---
 
-## 🔄 Project Pipeline
+
+
+## Project Pipeline
 
 ```
 coffee_sales.csv (3,636 rows, transaction-level)
@@ -110,28 +89,9 @@ All rolling features use `.shift(1)` to **prevent data leakage** — `src/featur
 
 ---
 
-## 🧩 Feature Engineering
 
-23 engineered features across 4 groups (`src/feature_engineering.py:13`):
 
-**1. Time / Seasonality (7)**
-`day_of_week`, `week_of_year`, `month`, `quarter`, `year`, `day_of_month`, `is_weekend`
-
-**2. Lag Features (4)**
-`lag_1`, `lag_7`, `lag_14`, `lag_30` — revenue from 1, 7, 14, 30 days ago
-
-**3. Rolling Window Statistics (7)**
-`rolling_mean_7/14/30`, `rolling_std_7/30`, `rolling_min_7`, `rolling_max_7` — all shifted by 1 day
-
-**4. Business Ratio Features (4)**
-`avg_revenue_per_transaction`, `avg_revenue_per_customer`, `card_ratio`, `cash_ratio`
-
-**Target:**
-`target = daily_revenue.shift(-1)` — next day's revenue (`src/feature_engineering.py:68`, horizon=1)
-
----
-
-## 🤖 Modeling
+## Modeling
 
 **Split strategy:** Time-based split — no shuffling (`src/train_model.py:18`). First 80% for training, last 20% (70 days) for testing. This mimics real-world forecasting.
 
@@ -148,7 +108,9 @@ Selection criterion: **lowest MAE** on the test set (`src/train_model.py:95`). T
 
 ---
 
-## 📊 Results & Evaluation
+
+
+## Results & Evaluation
 
 Evaluation on the **holdout 70-day test set** (`outputs/predictions.csv`):
 
@@ -160,36 +122,6 @@ Evaluation on the **holdout 70-day test set** (`outputs/predictions.csv`):
 
 > Metrics computed in `src/evaluation.py:24` — MAPE handles zero-division safely. Re-run `evaluation.py` to regenerate.
 
-### Top 15 Feature Importances (Random Forest)
-
-From `outputs/feature_importance.csv`:
-
-| Rank | Feature | Importance |
-|------|---------|------------|
-| 1 | `rolling_mean_7` | 0.108 |
-| 2 | `rolling_std_30` | 0.091 |
-| 3 | `rolling_max_7` | 0.085 |
-| 4 | `rolling_mean_14` | 0.069 |
-| 5 | `lag_14` | 0.063 |
-| 6 | `lag_7` | 0.059 |
-| 7 | `lag_1` | 0.051 |
-| 8 | `day_of_month` | 0.050 |
-
-**Insight:** Short-term rolling trends (`rolling_mean_7`, `rolling_max_7`) and volatility (`rolling_std_30`) dominate — the model learns momentum and weekly seasonality more than calendar features like `month` or `is_weekend`.
-
-### Visual Reports
-
-Generated outputs:
-
-- `outputs/top 15 feature importance.png` — horizontal bar chart of importances
-- `outputs/Correlation heatmap for daily sales features data.png` — feature correlation matrix
-- `outputs/predictions.csv` — `date, daily_revenue, target, predicted_target, error`
-- `reports/Act vs Pred Daily Revenue.png` — daily actual vs. predicted
-- `reports/Weekly Total Predicted vs Actual revenue.png`
-- `reports/Monthly Total Act vs Pred.png`
-- `reports/Predictions and Visual Interpretations.xlsx` — stakeholder-ready workbook
-
----
 
 ## 📁 Project Structure
 
@@ -316,28 +248,6 @@ Add to README for GitHub display:
 - **Rolling statistics > raw lags** — smoothed trends are more predictive than single-day lags.
 - **Baselines are essential** — without Naive/MA7 comparison, you can't tell if ML adds value.
 - **Leakage prevention** — every rolling feature is `.shift(1)` before `.rolling()`.
-
----
-
-## 🔮 Future Improvements
-
-- [ ] Replace hardcoded absolute paths with `pathlib` / relative paths
-- [ ] Add `XGBoost` / `LightGBM` and time-series models (`Prophet`, `ARIMA`, `LSTM`)
-- [ ] Hyperparameter tuning with `GridSearchCV` / `Optuna` + time-series cross-validation
-- [ ] Add `MAPE` to model selection (currently MAE only)
-- [ ] Weekly/monthly horizon forecasts (7-day, 30-day)
-- [ ] Interactive dashboard with `Streamlit` or `Gradio`
-- [ ] CI with `pytest` for preprocessing/feature engineering unit tests
-- [ ] Log experiments with `MLflow`
-
----
-
-## 👤 Author
-
-Built as a portfolio project demonstrating end-to-end ML for time-series forecasting.
-
-- GitHub: [@your-username](https://github.com/your-username)
-- LinkedIn: [Your Name](https://linkedin.com/in/your-profile)
 
 ---
 
