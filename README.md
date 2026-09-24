@@ -4,6 +4,12 @@
 
 This project builds an end-to-end machine learning pipeline to **forecast daily coffee shop revenue one day ahead**. Starting from 3,636 raw transactions, the pipeline cleans data, aggregates to daily granularity, engineers 23+ time-series features, and benchmarks classical baselines against ML models.
 
+You can read the full Medium article here: 
+https://medium.com/@that.kimani/transactions-to-forecasts-sales-analysis-and-forecasting-using-ml-6b3e4f797693
+
+---
+
+
 
 **Best model:** `RandomForestRegressor (n_estimators=500)` — automatically selected by lowest MAE on a time-based holdout and persisted as `models/best_model.pkl`.
 
@@ -123,7 +129,7 @@ Evaluation on the **holdout 70-day test set** (`outputs/predictions.csv`):
 > Metrics computed in `src/evaluation.py:24` — MAPE handles zero-division safely. Re-run `evaluation.py` to regenerate.
 
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 main/
@@ -155,7 +161,7 @@ main/
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -184,7 +190,7 @@ pip install -r requirements.txt
 
 ---
 
-## ▶️ How to Run
+##  How to Run
 
 Run the pipeline in order — each script is self-contained with a `main()` entry point:
 
@@ -223,7 +229,7 @@ print(f"Next-day revenue prediction: {model.predict(X_latest)[0]:.2f}")
 
 ---
 
-## 🖼️ Visualizations
+## Visualizations
 
 | Visualization | Location |
 |---------------|----------|
@@ -242,18 +248,12 @@ Add to README for GitHub display:
 
 ---
 
-## 💡 Key Learnings
+## Key Learnings
 
 - **Time-based splitting matters** — shuffling would leak future information and inflate scores.
 - **Rolling statistics > raw lags** — smoothed trends are more predictive than single-day lags.
 - **Baselines are essential** — without Naive/MA7 comparison, you can't tell if ML adds value.
 - **Leakage prevention** — every rolling feature is `.shift(1)` before `.rolling()`.
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License — see [LICENSE](LICENSE) for details.
 
 ---
 
