@@ -1,4 +1,4 @@
-# Coffee Shop Sales Forecasting with Machine Learning
+# Sales Forecasting with Machine Learning
 
 ## Overview
 
