@@ -229,25 +229,6 @@ print(f"Next-day revenue prediction: {model.predict(X_latest)[0]:.2f}")
 
 ---
 
-## Visualizations
-
-| Visualization | Location |
-|---------------|----------|
-| Correlation Heatmap | `outputs/Correlation heatmap for daily sales features data.png` |
-| Top 15 Feature Importance | `outputs/top 15 feature importance.png` |
-| Daily Actual vs Predicted | `reports/Act vs Pred Daily Revenue.png` |
-| Weekly Aggregated Forecast | `reports/Weekly Total Predicted vs Actual revenue.png` |
-| Monthly Aggregated Forecast | `reports/Monthly Total Act vs Pred.png` |
-
-Add to README for GitHub display:
-
-```markdown
-![Feature Importance](outputs/top%2015%20feature%20importance.png)
-![Actual vs Predicted](reports/Act%20vs%20Pred%20Daily%20Revenue.png)
-```
-
----
-
 ## Key Learnings
 
 - **Time-based splitting matters** — shuffling would leak future information and inflate scores.
